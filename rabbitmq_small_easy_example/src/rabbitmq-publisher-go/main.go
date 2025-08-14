@@ -29,7 +29,7 @@ func main() {
 		if err == nil {
 			break
 		}
-		log.Printf("Intento %d de conexión fallido: %v", i+1, err)
+		log.Printf("Connection attempt %d failed: %v", i+1, err)
 		time.Sleep(5 * time.Second)
 	}
 	failOnError(err, "Failed to connect to RabbitMQ")
