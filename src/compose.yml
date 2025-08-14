@@ -1,0 +1,35 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.1.0-management
+    container_name: rabbitmq
+    restart: always
+    tty: true
+    stdin_open: true
+    ports:
+      - "5672:5672"     # default port for rabbitmq
+      - "15672:15672"   # rabbitmq management UI guest:guest
+    volumes:
+      - ./enable_plugins:/etc/rabbitmq/enabled_plugins:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  publisher:
+    build: ./rabbitmq-publisher-go
+    container_name: go-publisher
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+
+  subscriber:
+    build: ./rabbitmq-subscriber-go
+    container_name: go-subscriber
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_HOST=rabbitmq

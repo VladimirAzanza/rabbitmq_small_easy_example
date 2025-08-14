@@ -1,0 +1,1 @@
+# RabbitMQ Small Easy Example
